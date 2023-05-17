@@ -1,0 +1,29 @@
+<tool id='wpc252_pesmd-workflow' name='wpc252_pesmd-workflow'>
+  <command interpreter='parsl'>main.py</command>
+  <inputs>
+    <section name='model_inputs' type='section' title='Model Inputs' expanded='true'>
+      <param name='calc' label='Rate or FES calc' type='boolean' truevalue='Rates' falsevalue='FES' width='30%' help='Select Rates or FES'>
+      </param>
+      <param name='model' label='slip or catch' type='boolean' truevalue='slip' falsevalue='catch' width='30%' help='Select Slip or Catch'>
+      </param>
+      <param name='simlength' type='float' label='simulation time in ns' value='10' width='30%'>
+      </param>
+      <param name='nruns' type='integer' label='Number of Simulations' min='1' max='25' value='11' help='Set multiple runs for Rates estimation'>
+      </param>
+      <param name='fstart' type='float' label='starting force' value='0.0' width='30%'>
+      </param>
+      <param name='fstop' type='float' label='stopping force' value='2.0' width='30%'>
+      </param>
+      <param name='nforce' type='integer' label='number of forces' value='5' width='30%'>
+      </param>
+      <param name='outdir' type='text' label='output directory' value='infrmetad' help='indicate ouput directory for run' width='30%'>
+      </param>
+    </section>
+  </inputs>
+  <outputs>
+    <data name='outcsv' format='csv' label='outdir/pesmd_output.csv'>
+    </data>
+    <data name='outhtml' format='html' label='outdir/pesmd_output.html'>
+    </data>
+  </outputs>
+</tool>

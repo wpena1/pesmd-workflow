@@ -1,0 +1,9 @@
+temperature 1
+tstep 0.002
+friction 1
+dimension 2
+nstep _NSTEP_
+ipos 3.5 -2.5
+idum _SEED_
+periodic false
+plumed _OUTPREFIX_.plumed.dat
