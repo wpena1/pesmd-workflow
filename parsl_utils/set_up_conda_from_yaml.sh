@@ -31,7 +31,7 @@ f_set_up_conda_from_yaml() {
         conda activate ${CONDA_ENV}
     } || {
         echo "Conda environment <${CONDA_ENV}> not found. Installing conda environment from YAML file <${CONDA_YAML}>"
-        conda env create --name ${CONDA_ENV} -f ${CONDA_YAML} #--prune
+        conda env create -n ${CONDA_ENV} --file ${CONDA_YAML} #--prune
            {
             echo "Activating Conda Environment <${CONDA_ENV}> again"
             conda activate ${CONDA_ENV}
