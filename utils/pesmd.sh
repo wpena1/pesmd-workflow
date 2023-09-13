@@ -9,11 +9,10 @@ if [ -z "$input" ];then
 echo "Usage: $0 input_file outputprefix"
 exit 1
 fi
-
 #this includes putting plumed in the path
-
 #source ${conda_dir}/etc/profile.d/conda.sh
 #conda activate plumedgmx
+
 chk=$(which plumed)
 if [ -z "$chk" ];then
 echo "plumed not found in path: make sure you conda env was installed and activated"
