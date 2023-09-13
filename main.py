@@ -1,13 +1,19 @@
 import parsl
-import os
+import os, json
 from parsl.app.app import python_app, bash_app
-from parsl.data_provider.files import File
-from path import Path
-from parslpw import pwconfig, pwargs
+print(parsl.__version__, flush = True)
 
-parsl.clear()
-parsl.load(pwconfig)
-
+import parsl_utils
+from parsl_utils.config import config, resource_labels, form_inputs
+from parsl_utils.data_provider import PWFile
+# from parsl.data_provider.files import File
+# from path import Path
+# from utils.parslpw import pwconfig, pwargs
+# parsl.clear()
+# parsl.load(pwconfig)
+print("Configuring Parsl...")
+parsl.load(config)
+print("Parsl config loaded.")
 
 def replace_file(sub_dict,input_file,output_file=None):
     with open(input_file, 'r') as f:
@@ -24,7 +30,7 @@ def replace_file(sub_dict,input_file,output_file=None):
         # print(os.path.dirname(output_file))
         return output_file
 
-
+@parsl_utils.parsl_wrappers.log_app
 @bash_app
 def run_pesmd(inputs=[], outputs=[], stdout="run.out", stderr="run.err", pesmd_script="./pesmd.sh", calctype=True, sum_hills=1):
     import os
@@ -40,7 +46,7 @@ def run_pesmd(inputs=[], outputs=[], stdout="run.out", stderr="run.err", pesmd_s
     pesmd_file_name = os.path.basename(pesmd_input_file)
     return "cd %s;bash %s %s %s %s %s"%(pesmd_file_dir,pesmd_script, pesmd_file_name, outputprefix, calctype, sum_hills)
 
-
+@parsl_utils.parsl_wrappers.log_app
 @bash_app
 def remove_files(rundir):
     import os
@@ -53,25 +59,24 @@ def remove_files(rundir):
 
 if __name__ == "__main__":
     import sys
-    import AnalysisMetad2 as metaD
     import numpy as np
 
-    n_repeats = int(pwargs.nruns)
-    outdir = pwargs.outdir
-    fstop = float(pwargs.fstop)*-1
-    fstart = float(pwargs.fstart)
-    nforce = int(pwargs.nforce)
-    force_list = metaD.np.linspace(fstop,fstart,nforce)
-    run_dir = metaD.os.getcwd()
-    source_dir = metaD.os.path.join('./', outdir)
-    output = metaD.os.path.join(source_dir, "figures")
-    calc_type = eval(pwargs.calc)
-    model_type = eval(pwargs.model)
-    t_calc_type = pwargs.calc
-    t_model_type = pwargs.model
-    simlength = float(pwargs.simlength)
+    n_repeats = form_inputs['nruns']
+    outdir = form_inputs['outdir']
+    fstop = float(form_inputs['fstop'])*-1
+    fstart = float(form_inputs['fstart'])
+    nforce = int(form_inputs['nforce'])
+    force_list = np.linspace(fstop,fstart,nforce)
+    run_dir = os.getcwd()
+    source_dir = os.path.join('./', outdir)
+    output = os.path.join(source_dir, "figures")
+    calc_type = eval(form_inputs['calc'])
+    model_type = eval(form_inputs['model'])
+    t_calc_type = form_inputs['calc']
+    t_model_type = form_inputs['model']
+    simlength = float(form_inputs['simlength'])
     n_steps = int(1e6*simlength/2)
-    kbT = 2.249
+    kbT = 2.249 # 300K in KJ/mol
     rid="r1"
     print('output at: ', source_dir)
     print('figures at: ', output)
@@ -82,18 +87,18 @@ if __name__ == "__main__":
         if calc_type == False: # FES calculation
             calc_type_str = 'fes'
             n_repeats=1
-            output = metaD.os.path.join(source_dir, "slip", "fes", "figures" )
-            output_data = metaD.os.path.join(source_dir, "slip", "fes", "data" )
+            output = os.path.join(source_dir, "slip", "fes", "figures" )
+            output_data = os.path.join(source_dir, "slip", "fes", "data" )
             print("FES calc requested", n_repeats)
         else: # Rates calculation
             calc_type_str = 'infr'
             if n_repeats == 1:
                 n_repeats = 20
-            output = metaD.os.path.join(source_dir, "slip", "rates", "figures" )
-            output_data = metaD.os.path.join(source_dir, "slip", "rates", "data" )
+            output = os.path.join(source_dir, "slip", "rates", "figures" )
+            output_data = os.path.join(source_dir, "slip", "rates", "data" )
             print("Rates calc requested", n_repeats)
-        plumed_template=F'./dw{calc_type_str}.plumed.dat'
-        input_template=F'./dw{calc_type_str}.pesmd.input'
+        plumed_template=F'./plumed_inputs/dw{calc_type_str}.plumed.dat'
+        input_template=F'./plumed_inputs/dw{calc_type_str}.pesmd.input'
         model_name='slip'
 
     else: # Catch case
@@ -101,8 +106,8 @@ if __name__ == "__main__":
         if calc_type == False:
             calc_type_str = 'fes'
             n_repeats=1
-            output = metaD.os.path.join(source_dir, "catch", "fes", "figures" )
-            output_data = metaD.os.path.join(source_dir, "catch", "fes", "data" )
+            output = os.path.join(source_dir, "catch", "fes", "figures" )
+            output_data = os.path.join(source_dir, "catch", "fes", "data" )
 
             print("FES calc requested", n_repeats)
         else:
@@ -126,19 +131,19 @@ if __name__ == "__main__":
             calc_type_str = 'infr'
             if n_repeats == 1:
                 n_repeats = 20
-            output = metaD.os.path.join(source_dir, "catch", "rates", "figures" )
-            output_data = metaD.os.path.join(source_dir, "catch", "rates", "data" )
-            positions = np.genfromtxt(F"./positions.dat", dtype=float)
+            output = os.path.join(source_dir, "catch", "rates", "figures" )
+            output_data = os.path.join(source_dir, "catch", "rates", "data" )
+            positions = np.genfromtxt(F"./plumed_inputs/positions.dat", dtype=float)
             lenpos = len(positions)
             print("Rates calc requested", n_repeats)
 
-        plumed_template=F'./tw{calc_type_str}.plumed.dat'
-        input_template=F'./tw{calc_type_str}.pesmd.input'
+        plumed_template=F'./plumed_inputs/tw{calc_type_str}.plumed.dat'
+        input_template=F'./plumed_inputs/tw{calc_type_str}.pesmd.input'
         model_name='catch'
 
-    plumed_label = metaD.os.path.basename(plumed_template).split('.')[0]
+    plumed_label = os.path.basename(plumed_template).split('.')[0]
+    
     result_list = []
-
 
     print("......Going in main loop to set up......")
     sumhills = 0
@@ -178,42 +183,42 @@ if __name__ == "__main__":
 
         for seed in range(1,n_repeats+1):
             #put each job in separate directories, because pesmd writes other random files
-            output_directory = metaD.os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
+            output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
 
-            metaD.os.makedirs(Path(output_directory), exist_ok=True)
+            os.makedirs(PWFile(output_directory), exist_ok=True)
 
             out_label = f"{seed}_pesmd"
-            #out_label = metaD.os.path.basename(metaD.os.path.dirname(output_directory))+"_s%i"%seed
-            output_prefix = metaD.os.path.join(output_directory,out_label)
+            output_prefix = os.path.join(output_directory,out_label)
             sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_NSTEP_": "%d"%n_steps}
             if model_type == False and calc_type == True:
                 sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_INX_": "%3.2f"%init_x,\
                  "_INY_": "%3.2f"%init_y, "_NSTEP_": "%d"%n_steps, "_MIN_": "%f"%min_x, "_MAX_":"%f"%max_x, "_MINY_":"%f"%min_y,"_MAXY_":"%f"%max_y}
 
-            output_dir = Path(output_directory)
-            plumed_file = Path( replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat") )
-            pesmd_input_file = Path( replace_file(sub_dict,input_template,output_prefix+".pesmd.input") )
-            pesmd_script = Path(replace_file({}, "./pesmd.sh", output_prefix+".pesmd.sh"))
+            output_dir = PWFile(output_directory)
+            plumed_file = PWFile( replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat") )
+            pesmd_input_file = PWFile( replace_file(sub_dict,input_template,output_prefix+".pesmd.input") )
+            pesmd_script = PWFile(replace_file({}, "./pesmd.sh", output_prefix+".pesmd.sh"))
             r = run_pesmd(inputs=[pesmd_input_file, plumed_file], outputs=[output_dir], pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
             print("queued %d %3.2f"%(seed, force))
             result_list.append(r)
 
 
-    print("lenght of runs", len(result_list))
+    print("......lenght of runs......", len(result_list))
     print("......Set up done......")
     [r.result() for r in result_list]
     print("......Runs finished......")
     # sys.exit()
 
-    #  Analysis is executed below
+    print("......Excuting Analysis......")
+    import utils.AnalysisMetad2 as metaD
 
-    metaD.os.makedirs(output, exist_ok=True)
-    metaD.os.makedirs(output_data, exist_ok=True)
+    os.makedirs(output, exist_ok=True)
+    os.makedirs(output_data, exist_ok=True)
 
     if model_type == True: # Slip case
         plt_kde_force = []
         plt_trj_time = []
-        print(metaD.os.getcwd(), "current dir")
+        print(os.getcwd(), "current dir")
         ftemplate = F"dw{calc_type_str}_KJp_F_FORCE_/RUN/RUN_pesmd.temp_1.0.colvar.out"
         distance_traj = metaD.read_trajectory(source_dir, force_list, file_template=ftemplate, num_runs=n_repeats)
         print('......first plots.......')
@@ -418,7 +423,6 @@ if __name__ == "__main__":
                 href="/preview/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
                 <iframe width="100%" height="100%" src="/preview/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
                 </html>""".format(csvpath, 'force', csvpath, 'force'))
-
 
 
         else: # Rate Calc
