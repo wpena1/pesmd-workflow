@@ -3,8 +3,8 @@ set -e
 
 f_install_miniconda() {
     install_dir=$1
-    echo "Installing Miniconda3-py39_4.9.2"
-    conda_repo="https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh"
+    echo "Installing Miniconda3-py39_4.9.2 in remote resource"
+    conda_repo="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
     ID=$(date +%s)-${RANDOM} # This script may run at the same time!
     nohup wget ${conda_repo} -O /tmp/miniconda-${ID}.sh 2>&1 > /tmp/miniconda_wget-${ID}.out
     rm -rf ${install_dir}
@@ -44,6 +44,7 @@ fi
 
 
 # SET UP WORKER CONDA FROM YAML
+echo "SETTING UP CONDA ENVIRONMENT NOW IN REMOTE RESOURCE"
 f_set_up_conda_from_yaml ${worker_conda_dir} ${worker_conda_env} ${WORKER_CONDA_YAML}
 
 
