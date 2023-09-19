@@ -2,3 +2,6 @@
 /shelf/
 /workspace.xml
 .idea/
+logs/
+parsl_utils/__pycache__
+parsl_utils/data_provider/__pycache__
