@@ -55,9 +55,9 @@
       </conditional>
     </section> 
     <section name='model_inputs' type='section' title='Model Inputs' expanded='true'>
-      <param name='calc' label='Rate or FES calc' type='boolean' value='True' truevalue='Rates' falsevalue='FES' width='30%' help='Select Rates or FES'>
+      <param name='calc' label='Rate or FES calc' type='boolean' value='True' truevalue='Rates' falsevalue='FES' width='30%_none' help='Select Rates or FES'>
       </param>
-      <param name='model' label='slip or catch' type='boolean' value='True' truevalue='slip' falsevalue='catch' width='30%' help='Select Slip or Catch'>
+      <param name='model' label='slip or catch' type='boolean' value='True' truevalue='slip' falsevalue='catch' width='30%_none' help='Select Slip or Catch'>
       </param>
       <param name='simlength' type='float' label='simulation time in ns' value='10' width='30%_none'>
       </param>
