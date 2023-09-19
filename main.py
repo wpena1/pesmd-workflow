@@ -61,20 +61,20 @@ if __name__ == "__main__":
     import sys
     import numpy as np
 
-    n_repeats = form_inputs['nruns']
-    outdir = form_inputs['outdir']
-    fstop = float(form_inputs['fstop'])*-1
-    fstart = float(form_inputs['fstart'])
-    nforce = int(form_inputs['nforce'])
+    n_repeats = form_inputs['model_inputs_nruns']
+    outdir = form_inputs['model_inputs_outdir']
+    fstop = float(form_inputs['model_inputs_fstop'])*-1
+    fstart = float(form_inputs['model_inputs_fstart'])
+    nforce = int(form_inputs['model_inputs_nforce'])
     force_list = np.linspace(fstop,fstart,nforce)
     run_dir = os.getcwd()
     source_dir = os.path.join('./', outdir)
     output = os.path.join(source_dir, "figures")
-    calc_type = eval(form_inputs['calc'])
-    model_type = eval(form_inputs['model'])
-    t_calc_type = form_inputs['calc']
-    t_model_type = form_inputs['model']
-    simlength = float(form_inputs['simlength'])
+    calc_type = eval(form_inputs['model_inputs_calc'])
+    model_type = eval(form_inputs['model_inputs_model'])
+    t_calc_type = form_inputs['model_inputs_calc']
+    t_model_type = form_inputs['model_inputs_model']
+    simlength = float(form_inputs['model_inputs_simlength'])
     n_steps = int(1e6*simlength/2)
     kbT = 2.249 # 300K in KJ/mol
     rid="r1"
