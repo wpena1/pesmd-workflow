@@ -59,7 +59,7 @@
       </param>
       <param name='model' label='slip or catch' type='boolean' value='True' truevalue='slip' falsevalue='catch' width='30%' help='Select Slip or Catch'>
       </param>
-      <param name='simlength' type='float' label='simulation time in ns' value='10' width='30%'>
+      <param name='simlength' type='float' label='simulation time in ns' value='10' width='30%_none'>
       </param>
       <param name='nruns' type='integer' label='Number of Simulations' min='1' max='25' value='11' help='Set multiple runs for Rates estimation'>
       </param>
