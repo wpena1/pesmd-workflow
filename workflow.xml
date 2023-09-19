@@ -3,7 +3,7 @@
   <inputs>
     <param name='pw_conda_yaml' label='PW Conda YAML Definition File' type='hidden' value='./requirements/conda_env_local.yml' width='50%_none'></param>
     <param name='pw_conda_dir' label='PW Conda Directory' type='hidden' value='/home/wpc252/work/miniconda3' width='50%_none'></param>
-    <param name='pw_conda_env' label='PW Conda Environment Name' type='hidden' value='plumedgmx' width='50%_none'>
+    <param name='pw_conda_env' label='PW Conda Environment Name' type='hidden' value='plumedgmxparsl' width='50%_none'>
     </param> 
     <section name='pwrl_host1' type='section' title='Compute Cluster' expanded='true'>
       <param name='resource' type='computeResource' label='Compute cluster where job will be executed' hideUserWorkspace='true' 
@@ -12,7 +12,7 @@
       <param name='nports' label='Number of Ports to Reserve' type='hidden' value='2' width='50%_none'></param>
       <param name='worker_conda_yaml' label='Worker Conda YAML Definition File' type='hidden' value='./requirements/conda_env_remote.yml' width='50%_none'></param>
       <param name='worker_conda_dir' label='Worker Conda Directory' type='hidden' value='/home/wpc252/pw/miniconda' width='50%_none'></param>
-      <param name='worker_conda_env' label='Worker Conda Environment Name' type='hidden' value='plumedgmx' width='50%_none'></param>
+      <param name='worker_conda_env' label='Worker Conda Environment Name' type='hidden' value='plumedgmxparsl' width='50%_none'></param>
       <param name='cores_per_worker' label='Cores per Worker' type='integer' min="1" max="100" 
              help='cores_per_worker parameter for the Parsl HighThroughputExecutor' value='1' width='50%_none'>
       </param>
