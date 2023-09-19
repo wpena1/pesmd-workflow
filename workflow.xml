@@ -63,13 +63,13 @@
       </param>
       <param name='nruns' type='integer' label='Number of Simulations' min='1' max='25' value='11' help='Set multiple runs for Rates estimation'>
       </param>
-      <param name='fstart' type='float' label='starting force' value='0.0' width='30%'>
+      <param name='fstart' type='float' label='starting force' value='0.0' width='30%_none'>
       </param>
-      <param name='fstop' type='float' label='stopping force' value='2.0' width='30%'>
+      <param name='fstop' type='float' label='stopping force' value='2.0' width='30%_none'>
       </param>
-      <param name='nforce' type='integer' label='number of forces' value='5' width='30%'>
+      <param name='nforce' type='integer' label='number of forces' value='5' width='30%_none'>
       </param>
-      <param name='outdir' type='text' label='output directory' value='infrmetad' help='indicate ouput directory for run' width='30%'>
+      <param name='outdir' type='text' label='output directory' value='metad' help='indicate ouput directory for run' width='30%_none'>
       </param>
     </section>
   </inputs>
