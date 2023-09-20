@@ -3,80 +3,103 @@
   <inputs>
     <param name='pw_conda_yaml' label='PW Conda YAML Definition File' type='hidden' value='./requirements/conda_env_local.yml' width='50%_none'></param>
     <param name='pw_conda_dir' label='PW Conda Directory' type='hidden' value='/home/wpc252/work/miniconda3' width='50%_none'></param>
-    <param name='pw_conda_env' label='PW Conda Environment Name' type='hidden' value='plumedgmxparsl' width='50%_none'>
-    </param> 
+    <param name='pw_conda_env' label='PW Conda Environment Name' type='hidden' value='plumedgmxparsl' width='50%_none'></param> 
     <section name='pwrl_host1' type='section' title='Compute Cluster' expanded='true'>
       <param name='resource' type='computeResource' label='Compute cluster where job will be executed' hideUserWorkspace='true' 
-             help='Cluster to run simulation. Select a resource from drop down menu'>
-      </param>
+             help='Cluster to run simulation. Select a resource from drop down menu'></param>
       <param name='nports' label='Number of Ports to Reserve' type='hidden' value='2' width='50%_none'></param>
       <param name='worker_conda_yaml' label='Worker Conda YAML Definition File' type='hidden' value='./requirements/conda_env_remote.yml' width='50%_none'></param>
       <param name='worker_conda_dir' label='Worker Conda Directory' type='hidden' value='/home/wpc252/pw/miniconda' width='50%_none'></param>
       <param name='worker_conda_env' label='Worker Conda Environment Name' type='hidden' value='plumedgmxparsl' width='50%_none'></param>
       <param name='cores_per_worker' label='Cores per Worker' type='integer' min="1" max="100" 
-             help='cores_per_worker parameter for the Parsl HighThroughputExecutor' value='1' width='50%_none'>
-      </param>
+             help='cores_per_worker parameter for the Parsl HighThroughputExecutor' value='1' width='50%_none'></param>
       <conditional name="jobschedulertype_cond">
           <param name='jobschedulertype' type='select' label='Select scheduler type' help='Job will submitted with bash, sbatch, or qsub' width='50%_none' multiple='false'>
             <option value="CONTROLLER">Controller</option>
             <option value="SLURM" selected="true">SLURM Partition</option>
             <option value="PBS">PBS Queue</option>
-        </param>
-        <when value="SLURM">
-          <param name='_parsl_provider_partition' 
-                 label='SLURM Partition' type='text' 
-                 help='partition parameter for the Parsl SlurmProvider' value='' width='50%_none'>
           </param>
-          <param name='_parsl_provider_nodes_per_block' 
-                 label='Nodes per Block' type='integer' min="1" max="10" 
-                 help='nodes_per_block parameter for the Parsl SlurmProvider' value='1' width='50%_none'>
-          </param>
-          <param name='_parsl_provider_walltime' 
-                 label='Walltime' type='text' help='walltime parameter for the Parsl SlurmProvider' 
-                 value='01:00:00' width='50%_none'>
-          </param>
-          <param name='_parsl_provider_max_blocks' 
-                 label='Max Blocks' type='integer' min="1" max="10" 
-                 help='max_blocks parameter for the Parsl SlurmProvider' value='1' width='50%_none'>
-          </param>
-        </when>
-        <when value="PBS">
-          <param name='_sch__d_q___' 
-                 label='PBS queue' type='text' 
-                 help='Queue to submit the interactive job. Must select one! Use [qstat -f -Q] to list all queues on the system' 
-                 value='' width='50%_none'>
-          </param>
-          <param name='scheduler_directives' 
-                 label='Scheduler directives' type='text' 
-                 help='e.g. -l mem=1000;-l nodes=1:ppn=4 - Use the semicolon character ; to separate parameters. Do not include the PBS keyword.' 
-                 value='-l walltime=01:00:00;-l nodes=1;-l naccesspolicy=SINGLEJOB -n' width='100%_none'>
-          </param>
-        </when>
+          <when value="SLURM">
+            <param name='_parsl_provider_partition' 
+                  label='SLURM Partition' type='text' 
+                  help='partition parameter for the Parsl SlurmProvider' value='' width='50%_none'>
+            </param>
+            <param name='_parsl_provider_nodes_per_block' 
+                  label='Nodes per Block' type='integer' min="1" max="10" 
+                  help='nodes_per_block parameter for the Parsl SlurmProvider' value='1' width='50%_none'>
+            </param>
+            <param name='_parsl_provider_walltime' 
+                  label='Walltime' type='text' help='walltime parameter for the Parsl SlurmProvider' 
+                  value='01:00:00' width='50%_none'>
+            </param>
+            <param name='_parsl_provider_max_blocks' 
+                  label='Max Blocks' type='integer' min="1" max="10" 
+                  help='max_blocks parameter for the Parsl SlurmProvider' value='1' width='50%_none'>
+            </param>
+          </when>
+          <when value="PBS">
+            <param name='_sch__d_q___' 
+                  label='PBS queue' type='text' 
+                  help='Queue to submit the interactive job. Must select one! Use [qstat -f -Q] to list all queues on the system' 
+                  value='' width='50%_none'>
+            </param>
+            <param name='scheduler_directives' 
+                  label='Scheduler directives' type='text' 
+                  help='e.g. -l mem=1000;-l nodes=1:ppn=4 - Use the semicolon character ; to separate parameters. Do not include the PBS keyword.' 
+                  value='-l walltime=01:00:00;-l nodes=1;-l naccesspolicy=SINGLEJOB -n' width='100%_none'>
+            </param>
+          </when>
       </conditional>
     </section> 
     <section name='model_inputs' type='section' title='Model Inputs' expanded='true'>
-      <param name='calc' label='Rate or FES calc' type='boolean' value='True' truevalue='Rates' falsevalue='FES' width='30%_none' help='Select Rates or FES'>
+    <conditional name='model_type_cond'>
+      <param name='modeltype' type='select' label='modl type' help='Select model type: Slip or Catch' width='30%_none' multiple='false'>
+        <option value='slip'>Slip model</option>
+        <option value='catch'>Catch model</option>
       </param>
-      <param name='model' label='slip or catch' type='boolean' value='True' truevalue='slip' falsevalue='catch' width='30%_none' help='Select Slip or Catch'>
+      <when value='slip'>
+        <param name='fstart' type='float' label='starting force' value='0.0' width='30%_none'>
+        </param>
+        <param name='fstop' type='float' label='stopping force' value='2.0' width='30%_none'>
+        </param>
+        <param name='nforce' type='integer' label='number of forces' value='11' width='30%_none'>
+        </param>
+      </when>
+      <when value='catch'>
+        <param name='fstart' type='float' label='starting force' value='0.0' width='30%_none'>
+        </param>
+        <param name='fstop' type='float' label='stopping force' value='8.0' width='30%_none'>
+        </param>
+        <param name='nforce' type='integer' label='number of forces' value='21' width='30%_none'>
+        </param>
+      </when>
+    </conditional>
+    <conditional name='calc_type_cond'>
+      <param name='calctype' type='select' label='calc type' help='Select calculation type: Rate or FES' width='30%_none' multiple='false'>
+        <option value='FES'>FES calculation</option>
+        <option value='Rate'>Rate calculation</option>
       </param>
-      <param name='simlength' type='float' label='simulation time in ns' value='10' width='30%_none'>
-      </param>
-      <param name='nruns' type='integer' label='Number of Simulations' min='1' max='25' value='11' help='Set multiple runs for Rates estimation'>
-      </param>
-      <param name='fstart' type='float' label='starting force' value='0.0' width='30%_none'>
-      </param>
-      <param name='fstop' type='float' label='stopping force' value='2.0' width='30%_none'>
-      </param>
-      <param name='nforce' type='integer' label='number of forces' value='5' width='30%_none'>
-      </param>
-      <param name='outdir' type='text' label='output directory' value='metad' help='indicate ouput directory for run' width='30%_none'>
-      </param>
+      <when value='FES'>
+        <param name='simlength' type='float' label='Simulation time in ns' value='15' width='30%_none'>
+        </param>
+        <param name='nruns' type='integer' label='Number of Simulations' min='1' max='2' value='1' help='number of runs'  width='30%_none'>
+        </param>
+        <param name='outdir' type='text' label='output directory' value='metad_fes' help='indicate ouput directory for run' width='30%_none'>
+        </param>
+      </when>
+      <when value='Rate'>
+        <param name='simlength' type='float' label='Simulation time in ns' value='5' width='30%_none'>
+        </param>
+        <param name='nruns' type='integer' label='Number of Simulations' min='1' max='25' value='14' help='Set multiple runs for Rates estimation'  width='30%_none'>
+        </param>
+        <param name='outdir' type='text' label='output directory' value='metad_rate' help='indicate ouput directory for run' width='30%_none'>
+        </param>
+      </when>
+    </conditional>
     </section>
   </inputs>
   <outputs>
-    <data name='outcsv' format='csv' label='outdir/pesmd_output.csv'>
-    </data>
-    <data name='outhtml' format='html' label='outdir/pesmd_output.html'>
-    </data>
+    <data name='outcsv' format='csv' label='outdir/pesmd_output.csv'></data>
+    <data name='outhtml' format='html' label='outdir/pesmd_output.html'></data>
   </outputs>
 </tool>
