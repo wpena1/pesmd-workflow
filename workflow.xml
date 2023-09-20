@@ -52,12 +52,12 @@
       </conditional>
     </section> 
     <section name='model_inputs' type='section' title='Model Inputs' expanded='true'>
-    <conditional name='model_type_cond'>
-      <param name='modeltype' type='select' label='modl type' help='Select model type: Slip or Catch' width='30%_none' multiple='false'>
-        <option value='slip'>Slip model</option>
-        <option value='catch'>Catch model</option>
+    <conditional name="model_type_cond">
+      <param name='modeltype' type='select' label='model type' help='Select model type: Slip or Catch' width='100%_none' multiple='true'>
+        <option value="slip">Slip model</option>
+        <option value="catch">Catch model</option>
       </param>
-      <when value='slip'>
+      <when value="slip">
         <param name='fstart' type='float' label='starting force' value='0.0' width='30%_none'>
         </param>
         <param name='fstop' type='float' label='stopping force' value='2.0' width='30%_none'>
@@ -65,7 +65,7 @@
         <param name='nforce' type='integer' label='number of forces' value='11' width='30%_none'>
         </param>
       </when>
-      <when value='catch'>
+      <when value="catch">
         <param name='fstart' type='float' label='starting force' value='0.0' width='30%_none'>
         </param>
         <param name='fstop' type='float' label='stopping force' value='8.0' width='30%_none'>
@@ -74,20 +74,20 @@
         </param>
       </when>
     </conditional>
-    <conditional name='calc_type_cond'>
-      <param name='calctype' type='select' label='calc type' help='Select calculation type: Rate or FES' width='30%_none' multiple='true'>
-        <option value='FES'>FES calculation</option>
-        <option value='RATE'>Rate calculation</option>
+    <conditional name="calc_type_cond">
+      <param name='calctype' type='select' label='calculation type' help='Select calculation type: Rate or FES' width='100%_none' multiple='true'>
+        <option value="FES">FES calculation</option>
+        <option value="RATE">Rate calculation</option>
       </param>
-      <when value='FES'>
+      <when value="FES">
         <param name='simlength' type='float' label='Simulation time in ns' value='15.0' help='length of simulation' width='30%_none'>
         </param>
         <param name='nruns' type='integer' label='Number of Simulations' min='1' max='2' value='1' help='number of runs'  width='30%_none'>
         </param>
-        <param name='outdir' type='text' label='output directory' value='metad_fes' help='indicate ouput directory for run' width='30%_none'>
+        <param name='outdir' type='text' label='Output directory for calc' value='metad_fes' help='indicate ouput directory for run' width='30%_none'>
         </param>
       </when>
-      <when value='RATE'>
+      <when value="RATE">
         <param name='simlength' type='float' label='Simulation time in ns' value='5.0' help='length of simulation' width='30%_none'>
         </param>
         <param name='nruns' type='integer' label='Number of Simulations' min='1' max='25' value='14' help='Set multiple runs for Rates estimation'  width='30%_none'>
