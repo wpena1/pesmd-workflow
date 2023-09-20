@@ -29,10 +29,10 @@ def replace_file(sub_dict,input_file,output_file=None):
 
 @parsl_utils.parsl_wrappers.log_app
 @bash_app
-def run_pesmd(inputs=[], outputs=[], stdout="run.out", stderr="run.err", pesmd_script="./pesmd.sh", calctype=True, sum_hills=1):
+def run_pesmd(inputs=[], outputs=[], stdout="run.out", stderr="run.err", pesmd_script="./pesmd.sh", calctype='FES', sum_hills=1):
     import os
     #input 0 is pesmd file
-    if calctype: #  rate case
+    if calctype == 'RATE': #  rate case
         calctype=1
     else: #  fes case
         calctype=0
@@ -221,7 +221,7 @@ if __name__ == "__main__":
         sumhills = 1
 
     for i,force in enumerate(np.flip(force_list)):
-        if model_type == False and calc_type == True:
+        if model_type == 'catch' and calc_type == 'RATE':
             if lenfl == lenpos:
                 pair=positions[i]
                 init_x=pair[1]
@@ -250,15 +250,16 @@ if __name__ == "__main__":
         for seed in range(1,n_repeats+1):
             # put each job in separate directories, because pesmd writes other random files
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
-            os.makedirs(PWFile('', output_directory), exist_ok=True)
+            output_dir = PWFile('', output_directory)
+            os.makedirs(output_dir, exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
             sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_NSTEP_": "%d"%n_steps}
-            if model_type == False and calc_type == True:
+            if model_type == 'catch' and calc_type == 'RATE':
                 sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_INX_": "%3.2f"%init_x,\
                  "_INY_": "%3.2f"%init_y, "_NSTEP_": "%d"%n_steps, "_MIN_": "%f"%min_x, "_MAX_":"%f"%max_x, "_MINY_":"%f"%min_y,"_MAXY_":"%f"%max_y}
 
-            output_dir = PWFile('', output_directory)
+           
             plumed_file_path = replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat")
             plumed_file = PWFile('', plumed_file_path)
             plumed_input_path = replace_file(sub_dict,input_template,output_prefix+".pesmd.input")
