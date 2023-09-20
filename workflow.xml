@@ -80,7 +80,7 @@
         <option value='Rate'>Rate calculation</option>
       </param>
       <when value='FES'>
-        <param name='simlength' type='float' label='Simulation time in ns' value='15' width='30%_none'>
+        <param name='simlength' type='float' label='Simulation time in ns' value='15.0' help='length of simulation' width='30%_none'>
         </param>
         <param name='nruns' type='integer' label='Number of Simulations' min='1' max='2' value='1' help='number of runs'  width='30%_none'>
         </param>
@@ -88,7 +88,7 @@
         </param>
       </when>
       <when value='Rate'>
-        <param name='simlength' type='float' label='Simulation time in ns' value='5' width='30%_none'>
+        <param name='simlength' type='float' label='Simulation time in ns' value='5.0' help='length of simulation' width='30%_none'>
         </param>
         <param name='nruns' type='integer' label='Number of Simulations' min='1' max='25' value='14' help='Set multiple runs for Rates estimation'  width='30%_none'>
         </param>
