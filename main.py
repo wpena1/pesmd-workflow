@@ -263,7 +263,7 @@ if __name__ == "__main__":
             plumed_file = PWFile('', plumed_file_path)
             plumed_input_path = replace_file(sub_dict,input_template,output_prefix+".pesmd.input")
             pesmd_input_file = PWFile('', plumed_input_path)
-            pesmd_script_path = replace_file({}, "./pesmd.sh", output_prefix+".pesmd.sh")
+            pesmd_script_path = replace_file({}, "./utils/pesmd.sh", output_prefix+".pesmd.sh")
             pesmd_script = PWFile('', pesmd_script_path)
             r = run_pesmd(inputs=[pesmd_input_file, plumed_file], outputs=[output_dir], pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
             print("MAIN.py: queued %d %3.2f"%(seed, force))
