@@ -66,11 +66,11 @@
         </param>
       </when>
       <when value="catch">
-        <param name='fstart' type='float' label='starting force' value='0.0' width='30%_none'>
+        <param name='fstartc' type='float' label='starting force' value='0.0' width='30%_none'>
         </param>
-        <param name='fstop' type='float' label='stopping force' value='8.0' width='30%_none'>
+        <param name='fstopc' type='float' label='stopping force' value='8.0' width='30%_none'>
         </param>
-        <param name='nforce' type='integer' label='number of forces' value='21' width='30%_none'>
+        <param name='nforcec' type='integer' label='number of forces' value='21' width='30%_none'>
         </param>
       </when>
     </conditional>
