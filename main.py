@@ -178,8 +178,7 @@ if __name__ == "__main__":
             n_repeats=1
             output = os.path.join(source_dir, "catch", "fes", "figures" )
             output_data = os.path.join(source_dir, "catch", "fes", "data" )
-
-            print("MAIN.py: FES calc requested", n_repeats)
+            print("MAIN.py: FES calc requested", F'runs: {n_repeats}')
         else:
             lenfl = len(force_list)
             deltax = (22.65 - 13.5)/(lenfl-1)
@@ -205,21 +204,20 @@ if __name__ == "__main__":
             output_data = os.path.join(source_dir, "catch", "rates", "data" )
             positions = np.genfromtxt(F"./plumed_inputs/positions.dat", dtype=float)
             lenpos = len(positions)
-            print("MAIN.py: Rates calc requested", n_repeats)
+            print("MAIN.py: Rates calc requested", F'runs: {n_repeats}')
 
         plumed_template=F'./plumed_inputs/tw{calc_type_str}.plumed.dat'
         input_template=F'./plumed_inputs/tw{calc_type_str}.pesmd.input'
         model_name='catch'
 
     plumed_label = os.path.basename(plumed_template).split('.')[0]
-    
     result_list = []
 
     print("MAIN:.......Going in main loop to set up......")
     sumhills = 0
-    if model_type == False and calc_type == False: # catch, fes
+    if model_type == 'catch' and calc_type == 'FES': # catch, fes
         sumhills = 2
-    elif model_type == True and calc_type == False: # slip, fes
+    elif model_type == 'slip' and calc_type == 'FES': # slip, fes
         sumhills = 1
 
     for i,force in enumerate(np.flip(force_list)):
@@ -235,9 +233,7 @@ if __name__ == "__main__":
                 max_x = stopx + 0.5
                 min_y = stopy - 0.25
                 max_y = stopy + 0.5
-
             else:
-
                 if (force*-1) <= 3.2:
                     init_x = 3.5 + (c_count*init_deltax_c)
                     init_y = -2.5 + (c_count*init_deltay_c)
@@ -254,7 +250,7 @@ if __name__ == "__main__":
         for seed in range(1,n_repeats+1):
             # put each job in separate directories, because pesmd writes other random files
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
-            os.makedirs(PWFile(output_directory), exist_ok=True)
+            os.makedirs(PWFile('', output_directory), exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
             sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_NSTEP_": "%d"%n_steps}
@@ -262,8 +258,8 @@ if __name__ == "__main__":
                 sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_INX_": "%3.2f"%init_x,\
                  "_INY_": "%3.2f"%init_y, "_NSTEP_": "%d"%n_steps, "_MIN_": "%f"%min_x, "_MAX_":"%f"%max_x, "_MINY_":"%f"%min_y,"_MAXY_":"%f"%max_y}
 
-            output_dir = PWFile(output_directory)
-            plumed_file = PWFile( replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat") )
+            output_dir = PWFile('', output_directory)
+            plumed_file = PWFile(replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat") )
             pesmd_input_file = PWFile( replace_file(sub_dict,input_template,output_prefix+".pesmd.input") )
             pesmd_script = PWFile(replace_file({}, "./pesmd.sh", output_prefix+".pesmd.sh"))
             r = run_pesmd(inputs=[pesmd_input_file, plumed_file], outputs=[output_dir], pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
