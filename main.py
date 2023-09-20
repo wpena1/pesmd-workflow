@@ -1,19 +1,16 @@
 import parsl
-import os, json
+import os
 from parsl.app.app import python_app, bash_app
 print(parsl.__version__, flush = True)
 
+# import parsl utils stuff below
 import parsl_utils
 from parsl_utils.config import config, resource_labels, form_inputs
 from parsl_utils.data_provider import PWFile
-# from parsl.data_provider.files import File
-# from path import Path
-# from utils.parslpw import pwconfig, pwargs
-# parsl.clear()
-# parsl.load(pwconfig)
-print("Configuring Parsl...")
+
+print("MAIN.py:...Configuring Parsl...")
 parsl.load(config)
-print("Parsl config loaded.")
+print("MAIN.py:...Parsl config loaded...")
 
 def replace_file(sub_dict,input_file,output_file=None):
     with open(input_file, 'r') as f:
@@ -57,59 +54,132 @@ def remove_files(rundir):
         return f"rm -rf {path}"
 
 
+def is_str_numeric(txt, type):
+    if type == 'float':
+        try:
+            float(txt)
+            return True
+        except ValueError:
+            return False
+    elif type == 'int':
+        try:
+            int(txt)
+            return True
+        except ValueError:
+            return False
+    else:
+        print("func: is_str_numeric: type not supported")
+        return 0
+
 if __name__ == "__main__":
     import sys
     import numpy as np
     
-    n_repeats = form_inputs['model_inputs']['nruns']
-    outdir = form_inputs['model_inputs']['outdir']
-    fstop = float(form_inputs['model_inputs']['fstop'])*-1
-    fstart = float(form_inputs['model_inputs']['fstart'])
-    nforce = int(form_inputs['model_inputs']['nforce'])
+    model_type = str(form_inputs['model_inputs']['modeltype'])
+    calc_type = str(form_inputs['model_inputs']['calctype'])
+
+    if model_type == 'slip':
+        fstop = form_inputs['model_inputs']['fstop']
+        fstart = form_inputs['model_inputs']['fstart']
+        nforce = form_inputs['model_inputs']['nforce']
+        potential_rgx = form_inputs['model_inputs']['func']
+    elif model_type == 'catch':
+        fstop = form_inputs['model_inputs']['fstopc']
+        fstart = form_inputs['model_inputs']['fstartc']
+        nforce = form_inputs['model_inputs']['nforcec']
+        potential_rgx = form_inputs['model_inputs']['funcc']
+    else:
+        print("MAIN.py ERROR: model type is not slip or catch")
+        sys.exit()
+    
+    if is_str_numeric(fstop, 'float'):
+        fstop = float(fstop)*-1
+    else:
+        if model_type == 'slip':
+            fstop = 2.0*-1
+        elif model_type == 'catch':
+            fstop = 8.0*-1
+    
+    if is_str_numeric(fstart, 'float'):
+        fstart = float(fstart)
+    else:
+        fstart = 0.0
+     
+    if is_str_numeric(nforce, 'int'):
+        nforce = int(nforce)
+    else:
+        nforce = 11
+    
     force_list = np.linspace(fstop,fstart,nforce)
+
+    if calc_type == 'FES':
+        simlength = form_inputs['model_inputs']['simlength']
+        n_repeats = form_inputs['model_inputs']['nruns']
+        outdir = form_inputs['model_inputs']['outdir']
+    elif calc_type =='RATE':
+        simlength = form_inputs['model_inputs']['simlengthr']
+        n_repeats = form_inputs['model_inputs']['nrunsr']
+        outdir = form_inputs['model_inputs']['outdirr']
+    else:
+        print("MAIN.py ERROR: calculation type is not FES or Rate")
+        sys.exit()
+
+    if is_str_numeric(simlength, 'float'):
+        simlength = float(simlength)
+    else:
+        if calc_type == 'FES':
+            simlength = 15.0
+        else:
+            simlength = 7.5
+
+    if is_str_numeric(n_repeats, 'int'):
+        n_repeats = int(n_repeats)
+    else:
+        if calc_type == 'FES':
+            n_repeats = 1
+        else:
+            n_repeats = 14
+
+
     run_dir = os.getcwd()
     source_dir = os.path.join('./', outdir)
     output = os.path.join(source_dir, "figures")
-    calc_type = eval(form_inputs['model_inputs']['calc'])
-    model_type = eval(form_inputs['model_inputs']['model'])
-    t_calc_type = form_inputs['model_inputs']['calc']
-    t_model_type = form_inputs['model_inputs']['model']
-    simlength = float(form_inputs['model_inputs']['simlength'])
     n_steps = int(1e6*simlength/2)
     kbT = 2.249 # 300K in KJ/mol
     rid="r1"
-    print('output at: ', source_dir)
-    print('figures at: ', output)
-    print('current directory: ', run_dir)
 
-    if model_type == True: # Slip case
-        print("Slip model requested")
-        if calc_type == False: # FES calculation
+    print('MAIN.py: output at: ', source_dir)
+    print('MAIN.py: figures at: ', output)
+    print('MAIN.py: current directory: ', run_dir)
+
+    if model_type == 'slip': # Slip case
+        print("MAIN.py: Slip model requested")
+        if calc_type == 'FES': # FES calculation
             calc_type_str = 'fes'
             n_repeats=1
             output = os.path.join(source_dir, "slip", "fes", "figures" )
             output_data = os.path.join(source_dir, "slip", "fes", "data" )
-            print("FES calc requested", n_repeats)
+            print("MAIN.py: FES calc requested", n_repeats)
         else: # Rates calculation
             calc_type_str = 'infr'
             if n_repeats == 1:
                 n_repeats = 20
             output = os.path.join(source_dir, "slip", "rates", "figures" )
             output_data = os.path.join(source_dir, "slip", "rates", "data" )
-            print("Rates calc requested", n_repeats)
+            print("MAIN.py: Rates calc requested", n_repeats)
         plumed_template=F'./plumed_inputs/dw{calc_type_str}.plumed.dat'
         input_template=F'./plumed_inputs/dw{calc_type_str}.pesmd.input'
         model_name='slip'
 
     else: # Catch case
-        print("Catch model requested")
-        if calc_type == False:
+        print("MAIN.py: Catch model requested")
+        if calc_type == 'FES':
             calc_type_str = 'fes'
             n_repeats=1
             output = os.path.join(source_dir, "catch", "fes", "figures" )
             output_data = os.path.join(source_dir, "catch", "fes", "data" )
 
-            print("FES calc requested", n_repeats)
+            print("MAIN.py: FES calc requested", n_repeats)
         else:
             lenfl = len(force_list)
             deltax = (22.65 - 13.5)/(lenfl-1)
@@ -135,7 +205,7 @@ if __name__ == "__main__":
             output_data = os.path.join(source_dir, "catch", "rates", "data" )
             positions = np.genfromtxt(F"./plumed_inputs/positions.dat", dtype=float)
             lenpos = len(positions)
-            print("Rates calc requested", n_repeats)
+            print("MAIN.py: Rates calc requested", n_repeats)
 
         plumed_template=F'./plumed_inputs/tw{calc_type_str}.plumed.dat'
         input_template=F'./plumed_inputs/tw{calc_type_str}.pesmd.input'
@@ -145,7 +215,7 @@ if __name__ == "__main__":
     
     result_list = []
 
-    print("......Going in main loop to set up......")
+    print("MAIN:.......Going in main loop to set up......")
     sumhills = 0
     if model_type == False and calc_type == False: # catch, fes
         sumhills = 2
@@ -182,11 +252,9 @@ if __name__ == "__main__":
                 max_y = maxys + (i*deltay)
 
         for seed in range(1,n_repeats+1):
-            #put each job in separate directories, because pesmd writes other random files
+            # put each job in separate directories, because pesmd writes other random files
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
-
             os.makedirs(PWFile(output_directory), exist_ok=True)
-
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
             sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_NSTEP_": "%d"%n_steps}
@@ -199,29 +267,29 @@ if __name__ == "__main__":
             pesmd_input_file = PWFile( replace_file(sub_dict,input_template,output_prefix+".pesmd.input") )
             pesmd_script = PWFile(replace_file({}, "./pesmd.sh", output_prefix+".pesmd.sh"))
             r = run_pesmd(inputs=[pesmd_input_file, plumed_file], outputs=[output_dir], pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
-            print("queued %d %3.2f"%(seed, force))
+            print("MAIN.py: queued %d %3.2f"%(seed, force))
             result_list.append(r)
 
 
-    print("......lenght of runs......", len(result_list))
-    print("......Set up done......")
+    print("MAIN.py: ......lenght of runs......", len(result_list))
+    print("MAIN.py: ......Set up done......")
     [r.result() for r in result_list]
-    print("......Runs finished......")
+    print("MAIN.py: ......Runs finished......")
     # sys.exit()
 
-    print("......Excuting Analysis......")
+    print("MAIN.py: ......Excuting Analysis......")
     import utils.AnalysisMetad2 as metaD
 
     os.makedirs(output, exist_ok=True)
     os.makedirs(output_data, exist_ok=True)
 
-    if model_type == True: # Slip case
+    if model_type == 'slip': # Slip case
         plt_kde_force = []
         plt_trj_time = []
         print(os.getcwd(), "current dir")
         ftemplate = F"dw{calc_type_str}_KJp_F_FORCE_/RUN/RUN_pesmd.temp_1.0.colvar.out"
         distance_traj = metaD.read_trajectory(source_dir, force_list, file_template=ftemplate, num_runs=n_repeats)
-        print('......first plots.......')
+        print('MAIN.py: ......first plots.......')
         for i,force in enumerate(distance_traj):
             runs = distance_traj[force]
             plt_a = metaD.plot_distance_distribution(runs, rid, force, output)
@@ -229,7 +297,7 @@ if __name__ == "__main__":
             plt_kde_force.append(plt_a)
             plt_trj_time.append(plt_b)
 
-        if calc_type == False: # Fes calc
+        if calc_type == 'FES': # Fes calc
             fes_plots = []
             ftemplate = F"dw{calc_type_str}_KJp_F_FORCE_/RUN/RUN.fes.dat"
             fes_data = metaD.read_trajectory(source_dir, force_list, file_template=ftemplate, num_runs=n_repeats)
@@ -364,7 +432,7 @@ if __name__ == "__main__":
         plt_trj_time = []
         ftemplate = F"tw{calc_type_str}_KJp_F_FORCE_/RUN/RUN_pesmd.temp_1.0.colvar.out"
         distance_traj = metaD.read_trajectory(source_dir, force_list, file_template=ftemplate, num_runs=n_repeats)
-        print('......first plots.......')
+        print('MAIN.py: ......first plots.......')
         for i,force in enumerate(distance_traj):
             runs = distance_traj[force]
             plt_a = metaD.plot_distance_distribution(runs, rid, force, output)
@@ -372,7 +440,7 @@ if __name__ == "__main__":
             plt_kde_force.append(plt_a)
             plt_trj_time.append(plt_b)
 
-        if calc_type == False: # Fes Calc
+        if calc_type == 'FES': # Fes Calc
             fes_plots2d = []
             fes_plotsx = []
             fes_plotsy = []
