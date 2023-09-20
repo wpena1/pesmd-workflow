@@ -60,7 +60,7 @@ def remove_files(rundir):
 if __name__ == "__main__":
     import sys
     import numpy as np
-
+    
     n_repeats = form_inputs['model_inputs']['nruns']
     outdir = form_inputs['model_inputs']['outdir']
     fstop = float(form_inputs['model_inputs']['fstop'])*-1
