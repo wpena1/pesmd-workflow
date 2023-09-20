@@ -3,7 +3,7 @@ set -e
 
 f_install_miniconda() {
     install_dir=$1
-    echo "Installing Miniconda3-py39_4.9.2 in remote resource"
+    echo "Installing latest miniconda in remote resource"
     conda_repo="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
     ID=$(date +%s)-${RANDOM} # This script may run at the same time!
     nohup wget ${conda_repo} -O /tmp/miniconda-${ID}.sh 2>&1 > /tmp/miniconda_wget-${ID}.out

@@ -159,14 +159,14 @@ if __name__ == "__main__":
             n_repeats=1
             output = os.path.join(source_dir, "slip", "fes", "figures" )
             output_data = os.path.join(source_dir, "slip", "fes", "data" )
-            print("MAIN.py: FES calc requested", n_repeats)
+            print("MAIN.py: FES calc requested", F'runs: {n_repeats}')
         else: # Rates calculation
             calc_type_str = 'infr'
             if n_repeats == 1:
                 n_repeats = 20
             output = os.path.join(source_dir, "slip", "rates", "figures" )
             output_data = os.path.join(source_dir, "slip", "rates", "data" )
-            print("MAIN.py: Rates calc requested", n_repeats)
+            print("MAIN.py: Rates calc requested", F'runs: {n_repeats}')
         plumed_template=F'./plumed_inputs/dw{calc_type_str}.plumed.dat'
         input_template=F'./plumed_inputs/dw{calc_type_str}.pesmd.input'
         model_name='slip'
@@ -259,9 +259,12 @@ if __name__ == "__main__":
                  "_INY_": "%3.2f"%init_y, "_NSTEP_": "%d"%n_steps, "_MIN_": "%f"%min_x, "_MAX_":"%f"%max_x, "_MINY_":"%f"%min_y,"_MAXY_":"%f"%max_y}
 
             output_dir = PWFile('', output_directory)
-            plumed_file = PWFile(replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat") )
-            pesmd_input_file = PWFile( replace_file(sub_dict,input_template,output_prefix+".pesmd.input") )
-            pesmd_script = PWFile(replace_file({}, "./pesmd.sh", output_prefix+".pesmd.sh"))
+            plumed_file_path = replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat")
+            plumed_file = PWFile('', plumed_file_path)
+            plumed_input_path = replace_file(sub_dict,input_template,output_prefix+".pesmd.input")
+            pesmd_input_file = PWFile('', plumed_input_path)
+            pesmd_script_path = replace_file({}, "./pesmd.sh", output_prefix+".pesmd.sh")
+            pesmd_script = PWFile('', pesmd_script_path)
             r = run_pesmd(inputs=[pesmd_input_file, plumed_file], outputs=[output_dir], pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
             print("MAIN.py: queued %d %3.2f"%(seed, force))
             result_list.append(r)
