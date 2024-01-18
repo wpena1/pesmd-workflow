@@ -1,18 +1,17 @@
 import parsl
-import os
 from parsl.app.app import python_app, bash_app
 print(parsl.__version__, flush = True)
 
 # import parsl utils stuff below
 import parsl_utils
-from parsl_utils.config import config, resource_labels, form_inputs
+from parsl_utils.config import config, resource_labels, form_inputs, executor_dict
 from parsl_utils.data_provider import PWFile
 
 print("MAIN.py:...Configuring Parsl...")
 parsl.load(config)
 print("MAIN.py:...Parsl config loaded...")
 
-def replace_file(sub_dict,input_file,output_file=None):
+def replace_file(sub_dict, input_file, output_file=None):
     with open(input_file, 'r') as f:
         s = f.read()
         for key in sub_dict.keys():
@@ -23,8 +22,6 @@ def replace_file(sub_dict,input_file,output_file=None):
     else:
         with open(output_file,'w') as f:
             f.write(s)
-        # print(os.path.basename(output_file))
-        # print(os.path.dirname(output_file))
         return output_file
 
 @parsl_utils.parsl_wrappers.log_app
@@ -33,9 +30,9 @@ def run_pesmd(inputs=[], outputs=[], stdout="run.out", stderr="run.err", pesmd_s
     import os
     #input 0 is pesmd file
     if calctype == 'RATE': #  rate case
-        calctype=1
+        calctype = 1
     else: #  fes case
-        calctype=0
+        calctype = 0
     pesmd_script=os.path.basename(pesmd_script)
     pesmd_input_file = inputs[0].filepath
     outputprefix = os.path.basename(pesmd_script).split("_")[0]
@@ -72,8 +69,11 @@ def is_str_numeric(txt, type):
         return 0
 
 if __name__ == "__main__":
+    import os
     import sys
     import numpy as np
+
+    print(F"MAIN.py:...starting workflow setup...\n Resource list: {resource_labels}")
     
     model_type = str(form_inputs['model_inputs']['modeltype'])
     calc_type = str(form_inputs['model_inputs']['calctype'])
@@ -142,7 +142,10 @@ if __name__ == "__main__":
 
 
     run_dir = os.getcwd()
-    source_dir = os.path.join('./', outdir)
+    for key in executor_dict:
+        remote_dir = executor_dict[key]["resource"]["jobdir"]
+
+    source_dir = os.path.join('.', outdir)
     output = os.path.join(source_dir, "figures")
     n_steps = int(1e6*simlength/2)
     kbT = 2.249 # 300K in KJ/mol
@@ -251,7 +254,7 @@ if __name__ == "__main__":
             # put each job in separate directories, because pesmd writes other random files
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
             output_dir = PWFile('', output_directory)
-            os.makedirs(output_dir, exist_ok=True)
+            # os.makedirs(output_dir, exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
             sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_NSTEP_": "%d"%n_steps}
@@ -363,7 +366,7 @@ if __name__ == "__main__":
                 pfile.write("%f\t%f\n"%(float(force),p))
             pfile.close()
 
-            rates = 1/metaD.np.array(tau_list)
+            rates = 1/np.array(tau_list)
 
             error_bar = metaD.calculate_error_bars(tau_list, n_repeats)
 
@@ -395,7 +398,7 @@ if __name__ == "__main__":
             with open(F'{output_data}/{model_name}_rates.csv','w') as csvfile:
                 csvfile.write("\n".join(rows_rate))
             with open(F'{output_data}/{model_name}_rates.html', 'w') as html:
-                csvpath=metaD.os.path.join(run_dir,output_data,F'{model_name}_rates.csv')
+                csvpath=os.path.join(run_dir,output_data,F'{model_name}_rates.csv')
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
@@ -418,7 +421,7 @@ if __name__ == "__main__":
             with open(F'{output_data}/{model_name}.csv','w') as csvfile:
                 csvfile.write("\n".join(rows))
             with open(F'{output_data}/{model_name}.html', 'w') as html:
-                csvpath=metaD.os.path.join(run_dir,output_data,F'{model_name}.csv')
+                csvpath=os.path.join(run_dir,output_data,F'{model_name}.csv')
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
@@ -484,7 +487,7 @@ if __name__ == "__main__":
             with open(F'{output_data}/{model_name}.csv','w') as csvfile:
                 csvfile.write("\n".join(rows))
             with open(F'{output_data}/{model_name}.html', 'w') as html:
-                csvpath=metaD.os.path.join(run_dir,output_data,F'{model_name}.csv')
+                csvpath=os.path.join(run_dir,output_data,F'{model_name}.csv')
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
@@ -526,7 +529,7 @@ if __name__ == "__main__":
                 pfile.write("%f\t%f\n"%(float(force),p))
             pfile.close()
 
-            rates = 1/metaD.np.array(tau_list)
+            rates = 1/np.array(tau_list)
 
             error_bar = metaD.calculate_error_bars(tau_list, n_repeats)
 
@@ -561,7 +564,7 @@ if __name__ == "__main__":
             with open(F'{output_data}/{model_name}_rates.csv','w') as csvfile:
                 csvfile.write("\n".join(rows_rate))
             with open(F'{output_data}/{model_name}_rates.html', 'w') as html:
-                csvpath=metaD.os.path.join(run_dir,output_data,F'{model_name}_rates.csv')
+                csvpath=os.path.join(run_dir,output_data,F'{model_name}_rates.csv')
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
@@ -584,7 +587,7 @@ if __name__ == "__main__":
             with open(F'{output_data}/{model_name}.csv','w') as csvfile:
                 csvfile.write("\n".join(rows))
             with open(F'{output_data}/{model_name}.html', 'w') as html:
-                csvpath=metaD.os.path.join(run_dir,output_data,F'{model_name}.csv')
+                csvpath=os.path.join(run_dir,output_data,F'{model_name}.csv')
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
