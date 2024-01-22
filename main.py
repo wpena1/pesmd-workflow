@@ -266,9 +266,9 @@ if __name__ == "__main__":
 
            
             plumed_file_path = replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat")
-            plumed_file = PWFile(url='file://usercontainer/'+ plumed_file_path, )
+            plumed_file = PWFile(url='file://usercontainer/'+ plumed_file_path, local_path=remote_dir+output_dir_remote)
             plumed_input_path = replace_file(sub_dict,input_template,output_prefix+".pesmd.input")
-            pesmd_input_file = PWFile('', plumed_input_path)
+            pesmd_input_file = PWFile(url='file://usercontainer/'+ plumed_input_path, local_path=remote_dir+output_dir_remote)
             pesmd_script_path = replace_file({}, "./utils/pesmd.sh", output_prefix+".pesmd.sh")
             pesmd_script = PWFile('', pesmd_script_path)
             
