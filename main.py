@@ -4,7 +4,7 @@ print(parsl.__version__, flush = True)
 
 # import parsl utils stuff below
 import parsl_utils
-from parsl_utils.config import config, resource_labels, form_inputs, executor_dict
+from parsl_utils.config import config, resource_labels, form_inputs #, executor_dict
 from parsl_utils.data_provider import PWFile
 
 print("MAIN.py:...Configuring Parsl...")
@@ -38,7 +38,7 @@ def run_pesmd(inputs=[], outputs=[], stdout="run.out", stderr="run.err", pesmd_s
     outputprefix = os.path.basename(pesmd_script).split("_")[0]
     pesmd_file_dir = os.path.dirname(pesmd_input_file)
     pesmd_file_name = os.path.basename(pesmd_input_file)
-    return "cd %s;bash %s %s %s %s %s"%(pesmd_file_dir,pesmd_script, pesmd_file_name, outputprefix, calctype, sum_hills)
+    return "cd %s;bash %s %s %s %s %s"%(pesmd_file_dir, pesmd_script, pesmd_file_name, outputprefix, calctype, sum_hills)
 
 @parsl_utils.parsl_wrappers.log_app
 @bash_app
@@ -142,9 +142,10 @@ if __name__ == "__main__":
 
 
     run_dir = os.getcwd()
-    for key in executor_dict:
-        remote_dir = executor_dict[key]["resource"]["jobdir"]
-
+    # for key in executor_dict:
+    #    remote_dir = executor_dict[key]["resource"]["jobdir"]
+    remote_dir = config.executors[0].working_dir + F"/{outdir}"
+    
     source_dir = os.path.join('.', outdir)
     output = os.path.join(source_dir, "figures")
     n_steps = int(1e6*simlength/2)
@@ -253,7 +254,8 @@ if __name__ == "__main__":
         for seed in range(1,n_repeats+1):
             # put each job in separate directories, because pesmd writes other random files
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
-            output_dir = PWFile('', output_directory)
+            output_dir_remote = "%s_KJp_F%3.2f"%(plumed_label,force) + "%i"%seed
+            output_dir = PWFile(url='file://usercontainer/'+ output_directory, local_path=remote_dir+output_dir_remote)
             # os.makedirs(output_dir, exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
@@ -264,11 +266,12 @@ if __name__ == "__main__":
 
            
             plumed_file_path = replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat")
-            plumed_file = PWFile('', plumed_file_path)
+            plumed_file = PWFile(url='file://usercontainer/'+ plumed_file_path, )
             plumed_input_path = replace_file(sub_dict,input_template,output_prefix+".pesmd.input")
             pesmd_input_file = PWFile('', plumed_input_path)
             pesmd_script_path = replace_file({}, "./utils/pesmd.sh", output_prefix+".pesmd.sh")
             pesmd_script = PWFile('', pesmd_script_path)
+            
             r = run_pesmd(inputs=[pesmd_input_file, plumed_file], outputs=[output_dir], pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
             print("MAIN.py: queued %d %3.2f"%(seed, force))
             result_list.append(r)
