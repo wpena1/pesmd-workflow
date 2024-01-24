@@ -146,7 +146,7 @@ if __name__ == "__main__":
     #    remote_dir = executor_dict[key]["resource"]["jobdir"]
     remote_dir = config.executors[0].working_dir + F"/{outdir}"
     
-    source_dir = os.path.join('.', outdir)
+    source_dir = os.path.join(run_dir, outdir)
     output = os.path.join(source_dir, "figures")
     n_steps = int(1e6*simlength/2)
     kbT = 2.249 # 300K in KJ/mol
@@ -155,6 +155,7 @@ if __name__ == "__main__":
     print('MAIN.py: output at: ', source_dir)
     print('MAIN.py: figures at: ', output)
     print('MAIN.py: current directory: ', run_dir)
+    print('MAIN.py: remote directory: ', remote_dir)
 
     if model_type == 'slip': # Slip case
         print("MAIN.py: Slip model requested")
@@ -256,7 +257,7 @@ if __name__ == "__main__":
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
             output_dir_remote = "%s_KJp_F%3.2f"%(plumed_label,force) + "/%i"%seed
             output_dir = PWFile(url='file://usercontainer/' + output_directory, local_path=remote_dir+output_dir_remote)
-            # os.makedirs(output_dir, exist_ok=True)
+            os.makedirs(output_dir, exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
             sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_NSTEP_": "%d"%n_steps}
@@ -264,7 +265,6 @@ if __name__ == "__main__":
                 sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_INX_": "%3.2f"%init_x,\
                  "_INY_": "%3.2f"%init_y, "_NSTEP_": "%d"%n_steps, "_MIN_": "%f"%min_x, "_MAX_":"%f"%max_x, "_MINY_":"%f"%min_y,"_MAXY_":"%f"%max_y}
 
-           
             plumed_file_path = replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat")
             plumed_file = PWFile(url='file://usercontainer/'+ plumed_file_path, local_path=remote_dir+'/src')
             plumed_input_path = replace_file(sub_dict,input_template,output_prefix+".pesmd.input")
