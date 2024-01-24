@@ -259,7 +259,7 @@ if __name__ == "__main__":
             print("MAIN:....... output directory", output_directory)
             output_dir_remote = "%s_KJp_F%3.2f"%(plumed_label,force) + "/%i"%seed
             output_dir = PWFile(url='file://usercontainer/' + output_directory, local_path=remote_dir+output_dir_remote)
-            print("MAIN:....... PWfile output dir ", output_dir)
+            print("MAIN:....... PWfile output dir ", output_dir.filepath)
             os.makedirs(output_dir, exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
