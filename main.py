@@ -260,7 +260,7 @@ if __name__ == "__main__":
             output_dir_remote = "/%s_KJp_F%3.2f"%(plumed_label,force) + "/%i"%seed
             output_dir = PWFile(url='file://usercontainer/' + output_directory, local_path=remote_dir+output_dir_remote)
             print("MAIN:....... PWfile output dir ", output_dir.filepath)
-            os.makedirs(output_dir, exist_ok=True)
+            # os.makedirs(output_dir, exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
             sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_NSTEP_": "%d"%n_steps}
@@ -269,11 +269,11 @@ if __name__ == "__main__":
                  "_INY_": "%3.2f"%init_y, "_NSTEP_": "%d"%n_steps, "_MIN_": "%f"%min_x, "_MAX_":"%f"%max_x, "_MINY_":"%f"%min_y,"_MAXY_":"%f"%max_y}
 
             plumed_file_path = replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat")
-            plumed_file = PWFile(url='file://usercontainer/'+ plumed_file_path, local_path=remote_dir+'/src')
+            plumed_file = PWFile(url='file://usercontainer/'+ plumed_file_path, local_path=remote_dir+output_dir_remote+F'/{out_label}.plumed.dat')
             plumed_input_path = replace_file(sub_dict,input_template,output_prefix+".pesmd.input")
-            pesmd_input_file = PWFile(url='file://usercontainer/'+ plumed_input_path, local_path=remote_dir+'/src')
+            pesmd_input_file = PWFile(url='file://usercontainer/'+ plumed_input_path, local_path=remote_dir+output_dir_remote+F'/{out_label}.pesmd.input')
             pesmd_script_path = replace_file({}, "./utils/pesmd.sh", output_prefix+".pesmd.sh")
-            pesmd_script = PWFile(url='file://usercontainer/'+ pesmd_script_path, local_path=remote_dir+'/'+pesmd_script_path)
+            pesmd_script = PWFile(url='file://usercontainer/'+ pesmd_script_path, local_path=remote_dir+output_dir_remote+F'/{out_label}.pesmd.sh')
             
             r = run_pesmd(inputs=[pesmd_input_file, plumed_file], outputs=[output_dir], pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
             print("MAIN.py: queued %d %3.2f"%(seed, force))
@@ -284,7 +284,7 @@ if __name__ == "__main__":
     print("MAIN.py: ......Set up done......")
     [r.result() for r in result_list]
     print("MAIN.py: ......Runs finished......")
-    # sys.exit()
+    sys.exit()
 
     print("MAIN.py: ......Excuting Analysis......")
     import utils.AnalysisMetad2 as metaD
