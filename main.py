@@ -254,8 +254,8 @@ if __name__ == "__main__":
         for seed in range(1,n_repeats+1):
             # put each job in separate directories, because pesmd writes other random files
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
-            output_dir_remote = "%s_KJp_F%3.2f"%(plumed_label,force) + "%i"%seed
-            output_dir = PWFile(url='file://usercontainer/'+ output_directory, local_path=remote_dir+output_dir_remote)
+            output_dir_remote = "%s_KJp_F%3.2f"%(plumed_label,force) + "/%i"%seed
+            output_dir = PWFile(url='file://usercontainer/' + output_directory, local_path=remote_dir+output_dir_remote)
             # os.makedirs(output_dir, exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
@@ -266,9 +266,9 @@ if __name__ == "__main__":
 
            
             plumed_file_path = replace_file(sub_dict, plumed_template,output_prefix+".plumed.dat")
-            plumed_file = PWFile(url='file://usercontainer/'+ plumed_file_path, local_path=remote_dir+output_dir_remote)
+            plumed_file = PWFile(url='file://usercontainer/'+ plumed_file_path, local_path=remote_dir+'/src')
             plumed_input_path = replace_file(sub_dict,input_template,output_prefix+".pesmd.input")
-            pesmd_input_file = PWFile(url='file://usercontainer/'+ plumed_input_path, local_path=remote_dir+output_dir_remote)
+            pesmd_input_file = PWFile(url='file://usercontainer/'+ plumed_input_path, local_path=remote_dir+'/src')
             pesmd_script_path = replace_file({}, "./utils/pesmd.sh", output_prefix+".pesmd.sh")
             pesmd_script = PWFile('', pesmd_script_path)
             
