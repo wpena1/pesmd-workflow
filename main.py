@@ -284,7 +284,7 @@ if __name__ == "__main__":
     print("MAIN.py: ......Set up done......")
     [r.result() for r in result_list]
     print("MAIN.py: ......Runs finished......")
-    sys.exit()
+    
 
     print("MAIN.py: ......Excuting Analysis......")
     import utils.AnalysisMetad2 as metaD
