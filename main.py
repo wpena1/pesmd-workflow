@@ -259,8 +259,8 @@ if __name__ == "__main__":
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
             print("MAIN:....... output directory", output_directory)
             output_dir_remote = "/%s_KJp_F%3.2f"%(plumed_label,force) + "/%i"%seed
-            input_dir = PWFile(url='file://usercontainer/' + input_directory, local_path=remote_dir+output_dir_remote)
-            output_dir = PWFile(url='file://usercontainer/' + output_directory, local_path=remote_dir+ "/%s_KJp_F%3.2f"%(plumed_label,force))
+            input_dir = PWFile(url='file://usercontainer/' + input_directory, local_path=remote_dir + output_dir_remote)
+            output_dir = PWFile(url='file://usercontainer/' + source_dir + "/%s_KJp_F%3.2f"%(plumed_label,force), local_path=remote_dir + output_dir_remote)
             print("MAIN:....... PWfile output dir ", output_dir.filepath)
             os.makedirs(output_directory, exist_ok=True)
             out_label = f"{seed}_pesmd"
