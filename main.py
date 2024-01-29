@@ -255,10 +255,12 @@ if __name__ == "__main__":
         for seed in range(1,n_repeats+1):
             # put each job in separate directories, because pesmd writes other random files
             print("MAIN:.......setting up input files")
+            input_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
             print("MAIN:....... output directory", output_directory)
             output_dir_remote = "/%s_KJp_F%3.2f"%(plumed_label,force) + "/%i"%seed
-            output_dir = PWFile(url='file://usercontainer/' + output_directory, local_path=remote_dir+output_dir_remote)
+            input_dir = PWFile(url='file://usercontainer/' + input_directory, local_path=remote_dir+output_dir_remote)
+            output_dir = PWFile(url='file://usercontainer/' + output_directory, local_path=remote_dir+ "/%s_KJp_F%3.2f"%(plumed_label,force))
             print("MAIN:....... PWfile output dir ", output_dir.filepath)
             os.makedirs(output_dir, exist_ok=True)
             out_label = f"{seed}_pesmd"
