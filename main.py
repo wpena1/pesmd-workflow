@@ -262,7 +262,7 @@ if __name__ == "__main__":
             input_dir = PWFile(url='file://usercontainer/' + input_directory, local_path=remote_dir+output_dir_remote)
             output_dir = PWFile(url='file://usercontainer/' + output_directory, local_path=remote_dir+ "/%s_KJp_F%3.2f"%(plumed_label,force))
             print("MAIN:....... PWfile output dir ", output_dir.filepath)
-            os.makedirs(output_dir, exist_ok=True)
+            os.makedirs(output_directory, exist_ok=True)
             out_label = f"{seed}_pesmd"
             output_prefix = os.path.join(output_directory,out_label)
             sub_dict = { "_SEED_": "%i"%seed, "_OUTPREFIX_": out_label, "_FORCE_": "%3.2f"%force, "_NSTEP_": "%d"%n_steps}
