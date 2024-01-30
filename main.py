@@ -276,7 +276,7 @@ if __name__ == "__main__":
             pesmd_script_path = replace_file({}, "./utils/pesmd.sh", output_prefix+".pesmd.sh")
             pesmd_script = PWFile(url='file://usercontainer/'+ pesmd_script_path, local_path=remote_dir+output_dir_remote+F'/{out_label}.pesmd.sh')
             
-            r = run_pesmd(inputs=[pesmd_input_file, plumed_file], outputs=[output_dir], stdout=remote_dir+output_dir_remote+"/run.out", stderr=remote_dir+output_dir_remote+"/run.err", pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
+            r = run_pesmd(inputs=[pesmd_input_file, plumed_file, pesmd_script], outputs=[output_dir], stdout=remote_dir+output_dir_remote+"/run.out", stderr=remote_dir+output_dir_remote+"/run.err", pesmd_script=pesmd_script, calctype=calc_type, sum_hills=sumhills)
             print("MAIN.py: queued %d %3.2f"%(seed, force))
             result_list.append(r)
 
