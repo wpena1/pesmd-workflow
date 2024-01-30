@@ -17,7 +17,7 @@ from matplotlib.cm import ScalarMappable
 
 matplotlib.rcParams['savefig.dpi'] = 300
 matplotlib.rcParams['lines.linewidth'] = 1.5
-matplotlib.rcParams['font.family'] = 'Arial'
+#matplotlib.rcParams['font.family'] = 'Arial'
 plt.rcParams['font.size'] = 16
 plt.rcParams['axes.linewidth'] = 2
 matplotlib.use('Agg')
