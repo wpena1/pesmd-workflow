@@ -27,7 +27,7 @@
           </param>
           <param name='_parsl_provider_exclusive'
                  label='Exclusive node use' type='boolean'
-                 truevalue="True" falsevalue="False" checked="False" 
+                 truevalue='1' falsevalue='0' checked='0' 
                  help='Select Yes to request exclusive nodes; Parsl SlurmProvider.'
                  float="right" width='30%_none'>
           </param>
