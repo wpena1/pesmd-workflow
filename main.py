@@ -255,12 +255,11 @@ if __name__ == "__main__":
         for seed in range(1,n_repeats+1):
             # put each job in separate directories, because pesmd writes other random files
             print("MAIN:.......setting up input files")
-            input_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
             output_directory = os.path.join(source_dir,"%s_KJp_F%3.2f"%(plumed_label,force),"%i"%seed)
             print("MAIN:....... output directory", output_directory)
             output_dir_remote = "/%s_KJp_F%3.2f"%(plumed_label,force) + "/%i"%seed
-            input_dir = PWFile(url='file://usercontainer/' + input_directory, local_path=remote_dir + output_dir_remote)
-            output_dir = PWFile(url='file://usercontainer/' + source_dir + "/%s_KJp_F%3.2f"%(plumed_label,force), local_path=remote_dir + output_dir_remote)
+            output_dir_local = source_dir + "/%s_KJp_F%3.2f"%(plumed_label,force)
+            output_dir = PWFile(url='file://usercontainer/' + output_dir_local, local_path=remote_dir + output_dir_remote)
             print("MAIN:....... PWfile output dir ", output_dir.filepath)
             os.makedirs(output_directory, exist_ok=True)
             out_label = f"{seed}_pesmd"
@@ -297,7 +296,7 @@ if __name__ == "__main__":
     if model_type == 'slip': # Slip case
         plt_kde_force = []
         plt_trj_time = []
-        print(os.getcwd(), "current dir")
+        print('MAIN.py: current dir', os.getcwd())
         ftemplate = F"dw{calc_type_str}_KJp_F_FORCE_/RUN/RUN_pesmd.temp_1.0.colvar.out"
         distance_traj = metaD.read_trajectory(source_dir, force_list, file_template=ftemplate, num_runs=n_repeats)
         print('MAIN.py: ......first plots.......')
@@ -499,8 +498,8 @@ if __name__ == "__main__":
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
-                href="/preview/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
-                <iframe width="100%" height="100%" src="/preview/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
+                href="/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
+                <iframe width="100%" height="100%" src="/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
                 </html>""".format(csvpath, 'force', csvpath, 'force'))
 
 
@@ -576,8 +575,8 @@ if __name__ == "__main__":
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
-                href="/preview/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
-                <iframe width="100%" height="100%" src="/preview/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
+                href="/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
+                <iframe width="100%" height="100%" src="/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
                 </html>""".format(csvpath,'nruns', csvpath,'nruns'))
 
 
@@ -599,6 +598,6 @@ if __name__ == "__main__":
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
-                href="/preview/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
-                <iframe width="100%" height="100%" src="/preview/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
+                href="/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
+                <iframe width="100%" height="100%" src="/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
                 </html>""".format(csvpath,'force', csvpath, 'tau'))
