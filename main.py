@@ -333,8 +333,8 @@ if __name__ == "__main__":
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
-                href="/preview/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
-                <iframe width="100%" height="100%" src="/preview/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
+                href="/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
+                <iframe width="100%" height="100%" src="/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
                 </html>""".format(csvpath,'force', csvpath, 'force'))
 
 
@@ -410,8 +410,8 @@ if __name__ == "__main__":
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
-                href="/preview/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
-                <iframe width="100%" height="100%" src="/preview/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
+                href="/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
+                <iframe width="100%" height="100%" src="/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
                 </html>""".format(csvpath,'nruns', csvpath,'nruns'))
 
 
@@ -433,8 +433,8 @@ if __name__ == "__main__":
                 html.write("""\
                 <html style="overflow-y:hidden;background:white">\
                 <a style="font-family:sans-serif;z-index:1000;position:absolute;top:15px;right:0px;margin-right:20px;font-style:italic;font-size:10px"\
-                href="/preview/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
-                <iframe width="100%" height="100%" src="/preview/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
+                href="/DesignExplorer/index.html?datafile={}&colorby={}" target="_blank">Open in New Window</a>\
+                <iframe width="100%" height="100%" src="/DesignExplorer/index.html?datafile={}&colorby={}" frameborder="0"></iframe>\
                 </html>""".format(csvpath,'force', csvpath, 'force'))
 
 
