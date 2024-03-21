@@ -68,6 +68,7 @@ def is_str_numeric(txt, type):
         print("func: is_str_numeric: type not supported")
         return 0
 
+
 if __name__ == "__main__":
     import os
     import sys
@@ -147,13 +148,13 @@ if __name__ == "__main__":
     remote_dir = config.executors[0].working_dir + F"/{outdir}"
     
     source_dir = os.path.join(run_dir, outdir)
-    output = os.path.join(source_dir, "figures")
+    # output = os.path.join(source_dir, "figures")
     n_steps = int(1e6*simlength/2)
     kbT = 2.249 # 300K in KJ/mol
     rid="r1"
 
     print('MAIN.py: output at: ', source_dir)
-    print('MAIN.py: figures at: ', output)
+    # print('MAIN.py: figures at: ', output)
     print('MAIN.py: current directory: ', run_dir)
     print('MAIN.py: remote directory: ', remote_dir)
 
