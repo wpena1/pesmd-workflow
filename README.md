@@ -5,6 +5,9 @@ In the 1D case a force is applied to the interparticle distance as to pull parti
 In the 2D case both components of distance can be biased while pulling on one of the components.
 The biasing is done with the metadynamics method and FE surfaces and kinetic rates as a function of pulling force can be obtained for each case.
 
+The workflow is orchestrated with the
+[Parsl parallel scripting library](https://parsl-project.org/) 
+
 ## Contents
 
 + **`./thumb`:** contains thumbnail for workflow.
