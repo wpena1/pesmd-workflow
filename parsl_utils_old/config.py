@@ -36,6 +36,8 @@ def get_provider_parameters_from_form(resource_inputs):
         if k.startswith('_parsl_provider_'):
             key = k.replace('_parsl_provider_', '')
             provider_options[key] = guess_correct_type(v)
+            if '__RUN_DIR__' in v:
+                provider_options[key] = v.replace('__RUN_DIR__', resource_inputs['resource']['jobdir'])
 
     return provider_options
 
@@ -45,18 +47,9 @@ job_name = '-'.join(os.getcwd().split('/')[-2:])
 # Find all resource labels
 with open('inputs.json') as inputs_json:
     form_inputs = json.load(inputs_json)
+        
+resource_labels = [label.replace('pwrl_','') for label in form_inputs.keys() if label.startswith('pwrl_')]    
 
-resource_labels = []
-for label in form_inputs.keys():
-    if label.startswith('pwrl_'):
-        resource_labels.append(label.replace('pwrl_',''))
-    
-for label in resource_labels:
-    del form_inputs['pwrl_' + label]
-    with open(os.path.join('resources',label,'inputs.json')) as inputs_json:
-        form_inputs[label] = json.load(inputs_json)
-
-#
 # Need to name the job to be able to remove it with clean_resources.sh!
 job_name = '-'.join(os.getcwd().split('/')[-2:])
 
@@ -124,7 +117,7 @@ for label in resource_labels:
     # Data provider:
     # One instance per executor
     storage_access = [ 
-        PWRSyncStaging(label, resource_inputs['resource']['ssh_usercontainer_options']),
+        PWRSyncStaging(label),
         PWGsutil(label),
         PWS3(label)
     ]
@@ -180,10 +173,9 @@ for label in resource_labels:
             working_dir =  resource_inputs['resource']['jobdir'],
             cores_per_worker = cores_per_worker,
             worker_logdir_root = worker_logdir_root,
-            address = '*', #resource_inputs['resource']['privateIp'],
+            address = resource_inputs['resource']['privateIp'],
             provider = provider,
-            storage_access = storage_access,
-            launch_cmd='process_worker_pool.py {debug} {max_workers} -a '+resource_inputs['resource']['privateIp']+' -p {prefetch_capacity} -c {cores_per_worker} -m {mem_per_worker} --poll {poll_period} --task_port={task_port} --result_port={result_port} --logdir={logdir} --block_id={{block_id}} --hb_period={heartbeat_period} {address_probe_timeout_string} --hb_threshold={heartbeat_threshold} --cpu-affinity {cpu_affinity}'
+            storage_access = storage_access
         )
     )
     

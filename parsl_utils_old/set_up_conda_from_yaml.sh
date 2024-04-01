@@ -1,8 +1,7 @@
 
 f_install_miniconda() {
     install_dir=$1
-    echo "Installing Miniconda3 latest"
-    #conda_repo="https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh"
+    echo "Installing Latest Miniconda"
     conda_repo="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
     ID=$(date +%s)-${RANDOM} # This script may run at the same time!
     nohup wget ${conda_repo} -O /tmp/miniconda-${ID}.sh 2>&1 > /tmp/miniconda_wget-${ID}.out
@@ -18,7 +17,7 @@ f_set_up_conda_from_yaml() {
     CONDA_SH="${CONDA_DIR}/etc/profile.d/conda.sh"
     # conda env export
     # Remove line starting with name, prefix and remove empty lines
-    sed -i -e 's/name.*$//' -e 's/prefix.*$//' -e '/^$/d' ${CONDA_YAML}    
+    # sed -i -e 's/name.*$//' -e 's/prefix.*$//' -e '/^$/d' ${CONDA_YAML}    
     
     if [ ! -d "${CONDA_DIR}" ]; then
         echo "Conda directory <${CONDA_DIR}> not found. Installing conda..."
@@ -32,13 +31,13 @@ f_set_up_conda_from_yaml() {
         conda activate ${CONDA_ENV}
     } || {
         echo "Conda environment <${CONDA_ENV}> not found. Installing conda environment from YAML file <${CONDA_YAML}>"
-        conda env update -n ${CONDA_ENV} -q -f ${CONDA_YAML} #--prune
-        {
+        conda env create -n ${CONDA_ENV} --file ${CONDA_YAML} #--prune
+           {
             echo "Activating Conda Environment <${CONDA_ENV}> again"
             conda activate ${CONDA_ENV}
-        } || {
+           } || {
             echo "ERROR: Conda environment <${CONDA_ENV}> not found. Exiting workflow"
             exit 1
-        }
-    }
+            }
+         }
 }

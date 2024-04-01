@@ -11,5 +11,6 @@ for label in ${resource_labels}; do
     cat resources/${label}/inputs.sh >> ${prepare_resource_sh}
     cat ${PU_DIR}/set_up_conda_from_yaml.sh >> ${prepare_resource_sh}
     cat ${PU_DIR}/prepare_remote_resource.sh >> ${prepare_resource_sh}
+    echo "SENDING COMMAND TO PREPARE REMOTE RESOURCE"
     ssh ${SSH_OPTIONS} ${resource_publicIp} 'bash -s' < ${prepare_resource_sh}
 done
