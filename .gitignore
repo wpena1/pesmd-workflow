@@ -5,3 +5,4 @@
 logs/
 parsl_utils/__pycache__
 parsl_utils/data_provider/__pycache__
+parsl_utils_old/
